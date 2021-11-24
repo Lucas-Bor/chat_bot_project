@@ -36,6 +36,11 @@ body {
   .chatlog {
      font: 15px arial, sans-serif;
   }
+
+  .chatlogA {
+    font: 15px arial, sans-serif;
+    text-align: end;
+ }
   
   #chatbox {
     font: 17px arial, sans-serif;

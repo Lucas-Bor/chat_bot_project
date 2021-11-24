@@ -63,6 +63,9 @@ class MyBot {
             this.botMessage = await awaitFunction()
             console.log(this.botMessage)
         }
+        if (this.lastUserMessage === 'help') {
+            this.botMessage = 'Commands List : hello, name, chuck, kenuu';
+        }
     }
 
     //text to Speech
@@ -106,12 +109,9 @@ class MyBot {
             //sets the chat box to be clear
             document.getElementById("chatbox").value = "";
             //adds the value of the chatbox to the array messages
-            this.messages.push(this.time + " <b>" + this.userName + ":</b> " + this.lastUserMessage);
+            this.messages.push(this.lastUserMessage + " <b>:" + this.userName + "</b> " + this.time);
             //Speech(lastUserMessage);  //says what the user typed outloud
             //sets the variable botMessage in response to lastUserMessage
-            setTimeout(function(){
-                
-            }, 2000);
             await this.chatbotResponse();
             //add the chatbot's name and message to the array messages
             this.messages.push(this.time + " <b>" + this.botName + ":</b> " + this.botMessage);
