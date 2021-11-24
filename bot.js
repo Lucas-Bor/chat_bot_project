@@ -2,7 +2,7 @@ class MyBot {
     constructor(botName) {
         this.messages = [], //array that hold the record of each string in chat
         this.lastUserMessage = "", //keeps track of the most recent input string from the user
-        this.botMessage = "", //var keeps track of what the chatbot is going to say
+        this.botMessage = "Error", //var keeps track of what the chatbot is going to say
         this.botName = botName, //name of the chatbot
         this.userName = 'Userbot', //name of the chatbot
         this.talking = true; //when false the speach function doesn't work
@@ -11,7 +11,6 @@ class MyBot {
     }
 
     render() {
-        
         document.addEventListener("keypress", (e) => {
             this.keyPress();
         })
@@ -20,15 +19,28 @@ class MyBot {
     //edit this function to change what the chatbot says
     chatbotResponse() {
         this.talking = true;
-        this.botMessage = "I'm confused"; //the default message
-
-        if (this.lastUserMessage === 'hi' || this.lastUserMessage =='hello') {
+        this.botMessage
+        if (this.lastUserMessage =='hello') {
             const hi = ['hi','howdy','hello']
             this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
         }
-
         if (this.lastUserMessage === 'name') {
             this.botMessage = 'My name is ' + this.botName;
+        }
+        if (this.lastUserMessage === 'chuck') {
+            async function myFetch() {
+                const response = await fetch('https://api.chucknorris.io/jokes/random')
+                const url = await response.json();
+                return url.value;
+            }
+            const awaitFunction = async () => {
+                const result = await myFetch()
+                return result
+            }
+            (async () => {
+                console.log(await awaitFunction())
+                this.botMessage = await awaitFunction()
+              })()
         }
     }
 
@@ -65,11 +77,9 @@ class MyBot {
 
     //this runs each time enter is pressed.
     //It controls the overall input and output
-    newEntry() {
+    async newEntry() {
         //if the message from the user isn't empty then run 
-        console.log("hello")
         if (document.getElementById("chatbox").value != "") {
-            console.log("there")
             //pulls the value from the chatbox ands sets it to lastUserMessage
             this.lastUserMessage = document.getElementById("chatbox").value;
             //sets the chat box to be clear
@@ -81,6 +91,7 @@ class MyBot {
             this.chatbotResponse();
             //add the chatbot's name and message to the array messages
             this.messages.push("<b>" + this.botName + ":</b> " + this.botMessage);
+            //console.log(this.botMessage);
             // says the message using the text to speech function written below
             this.Speech(this.botMessage);
             //outputs the last few array elements of messages to html
@@ -111,6 +122,6 @@ function  closeNav() {
     document.getElementById("mySidebar").style.width = "0";
     } 
 
-const botV1 = new MyBot("Pierre");
+const botV1 = new MyBot("ChuckJoke");
 const botV2 = new MyBot("John");
 const botV3 = new MyBot("Jello");
