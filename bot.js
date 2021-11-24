@@ -17,9 +17,9 @@ class MyBot {
     }
 
     //edit this function to change what the chatbot says
-    chatbotResponse() {
+    async chatbotResponse() {
         this.talking = true;
-        this.botMessage
+        this.botMessage = "Error";
         if (this.lastUserMessage =='hello') {
             const hi = ['hi','howdy','hello']
             this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
@@ -38,9 +38,11 @@ class MyBot {
                 return result
             }
             (async () => {
-                console.log(await awaitFunction())
                 this.botMessage = await awaitFunction()
-              })()
+                return this.botMessage
+            })()
+            this.botMessage = await awaitFunction()
+            console.log(this.botMessage)
         }
     }
 
@@ -88,7 +90,8 @@ class MyBot {
             this.messages.push("<b>" + this.userName + ":</b> " + this.lastUserMessage);
             //Speech(lastUserMessage);  //says what the user typed outloud
             //sets the variable botMessage in response to lastUserMessage
-            this.chatbotResponse();
+            await this.chatbotResponse();
+            console.log(this.botMessage)
             //add the chatbot's name and message to the array messages
             this.messages.push("<b>" + this.botName + ":</b> " + this.botMessage);
             //console.log(this.botMessage);
