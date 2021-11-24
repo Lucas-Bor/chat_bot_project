@@ -2,12 +2,14 @@ class MyBot {
     constructor(botName) {
         this.messages = [], //array that hold the record of each string in chat
         this.lastUserMessage = "", //keeps track of the most recent input string from the user
-        this.botMessage = "Error", //var keeps track of what the chatbot is going to say
+        this.botMessage = "", //var keeps track of what the chatbot is going to say
         this.botName = botName, //name of the chatbot
         this.userName = 'Userbot', //name of the chatbot
         this.talking = true; //when false the speach function doesn't work
         this.app = document.querySelector("#app");
         this.run();
+        this.today = new Date();
+        this.time = this.today.getHours() + ":" + this.today.getMinutes();
     }
 
     render() {
@@ -19,7 +21,7 @@ class MyBot {
     //edit this function to change what the chatbot says
     async chatbotResponse() {
         this.talking = true;
-        this.botMessage = "Error";
+        this.botMessage = "I didn't understand that";
         if (this.lastUserMessage =='hello') {
             const hi = ['hi','howdy','hello']
             this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
@@ -32,6 +34,23 @@ class MyBot {
                 const response = await fetch('https://api.chucknorris.io/jokes/random')
                 const url = await response.json();
                 return url.value;
+            }
+            const awaitFunction = async () => {
+                const result = await myFetch()
+                return result
+            }
+            (async () => {
+                this.botMessage = await awaitFunction()
+                return this.botMessage
+            })()
+            this.botMessage = await awaitFunction()
+            console.log(this.botMessage)
+        }
+        if (this.lastUserMessage === 'kenuu') {
+            async function myFetch() {
+                const response = await fetch('https://api.kanye.rest/')
+                const url = await response.json();
+                return url.quote;
             }
             const awaitFunction = async () => {
                 const result = await myFetch()
@@ -87,13 +106,15 @@ class MyBot {
             //sets the chat box to be clear
             document.getElementById("chatbox").value = "";
             //adds the value of the chatbox to the array messages
-            this.messages.push("<b>" + this.userName + ":</b> " + this.lastUserMessage);
+            this.messages.push(this.time + " <b>" + this.userName + ":</b> " + this.lastUserMessage);
             //Speech(lastUserMessage);  //says what the user typed outloud
             //sets the variable botMessage in response to lastUserMessage
+            setTimeout(function(){
+                
+            }, 2000);
             await this.chatbotResponse();
-            console.log(this.botMessage)
             //add the chatbot's name and message to the array messages
-            this.messages.push("<b>" + this.botName + ":</b> " + this.botMessage);
+            this.messages.push(this.time + " <b>" + this.botName + ":</b> " + this.botMessage);
             //console.log(this.botMessage);
             // says the message using the text to speech function written below
             this.Speech(this.botMessage);
