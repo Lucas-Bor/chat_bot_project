@@ -1,10 +1,12 @@
 class MyBot {
-    constructor(botName) {
+    constructor(botName,triggerNumber,botVoice) {
         this.messages = [], //array that hold the record of each string in chat
         this.lastUserMessage = "", //keeps track of the most recent input string from the user
         this.botMessage = "", //var keeps track of what the chatbot is going to say
         this.botName = botName, //name of the chatbot
-        this.userName = 'Userbot', //name of the chatbot
+        this.triggerNumber = triggerNumber, //number defining command
+        this.botVoice = botVoice, //text-to-speech voice of the bot
+        this.userName = 'UserName', //name of the user
         this.talking = true; //when false the speach function doesn't work
         this.app = document.querySelector("#app");
         this.run();
@@ -18,10 +20,9 @@ class MyBot {
         })
     }
 
-    //edit this function to change what the chatbot says
     async chatbotResponse() {
         this.talking = true;
-        this.botMessage = "I didn't understand that";
+        this.botMessage = "I didn't understand this.";
         if (this.lastUserMessage =='hello') {
             const hi = ['hi','howdy','hello']
             this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
@@ -29,7 +30,7 @@ class MyBot {
         if (this.lastUserMessage === 'name') {
             this.botMessage = 'My name is ' + this.botName;
         }
-        if (this.lastUserMessage === 'chuck') {
+        if (this.lastUserMessage === 'chuck' && this.triggerNumber === 1) {
             async function myFetch() {
                 const response = await fetch('https://api.chucknorris.io/jokes/random')
                 const url = await response.json();
@@ -46,11 +47,28 @@ class MyBot {
             this.botMessage = await awaitFunction()
             console.log(this.botMessage)
         }
-        if (this.lastUserMessage === 'kenuu') {
+        if (this.lastUserMessage === 'kenuu' && this.triggerNumber === 2) {
             async function myFetch() {
                 const response = await fetch('https://api.kanye.rest/')
                 const url = await response.json();
                 return url.quote;
+            }
+            const awaitFunction = async () => {
+                const result = await myFetch()
+                return result
+            }
+            (async () => {
+                this.botMessage = await awaitFunction()
+                return this.botMessage
+            })()
+            this.botMessage = await awaitFunction()
+            console.log(this.botMessage)
+        }
+        if (this.lastUserMessage === 'catfact') {
+            async function myFetch() {
+                const response = await fetch('https://cat-fact.herokuapp.com/facts/random')
+                const url = await response.json();
+                return url.text;
             }
             const awaitFunction = async () => {
                 const result = await myFetch()
@@ -69,67 +87,52 @@ class MyBot {
     }
 
     //text to Speech
-    //https://developers.google.com/web/updates/2014/01/Web-apps-that-talk-Introduction-to-the-Speech-Synthesis-API
     Speech(say) {
-    if ('speechSynthesis' in window && this.talking) {
-        var utterance = new SpeechSynthesisUtterance(say);
-        //msg.voice = voices[10]; // Note: some voices don't support altering params
-        //msg.voiceURI = 'native';
-        //utterance.volume = 1; // 0 to 1
-        //utterance.rate = 0.1; // 0.1 to 10
-        //utterance.pitch = 1; //0 to 2
-        //utterance.text = 'Hello World';
-        //utterance.lang = 'en-US';
-        speechSynthesis.speak(utterance);
-    }
+        if ('speechSynthesis' in window && this.talking) {
+            var utterance = new SpeechSynthesisUtterance(say);
+            utterance.lang = 'en-US';
+            speechSynthesis.speak(utterance);
+        }
     }
 
     //runs the keypress() function when a key is pressed
-    //if the key pressed is 'enter' runs the function newEntry()
     keyPress(e) {
         var x = e || window.event;
         var key = (x.keyCode || x.which);
         if (key == 13 || key == 3) {
-            //runs this function when enter is pressed
             this.newEntry();
         }
         if (key == 38) {
             console.log('hi')
-            //document.getElementById("chatbox").value = lastUserMessage;
         }
     }
 
     //this runs each time enter is pressed.
-    //It controls the overall input and output
     async newEntry() {
+        
         //if the message from the user isn't empty then run 
         if (document.getElementById("chatbox").value != "") {
-            //pulls the value from the chatbox ands sets it to lastUserMessage
+            console.log(this.botName)
             this.lastUserMessage = document.getElementById("chatbox").value;
-            //sets the chat box to be clear
             document.getElementById("chatbox").value = "";
-            //adds the value of the chatbox to the array messages
-            this.messages.push(this.lastUserMessage + " <b>:" + this.userName + "</b> " + this.time);
-            //Speech(lastUserMessage);  //says what the user typed outloud
-            //sets the variable botMessage in response to lastUserMessage
+            this.messages.push(this.lastUserMessage + " <b>: " + this.userName + "</b> " + this.time);
             await this.chatbotResponse();
             //add the chatbot's name and message to the array messages
-            this.messages.push(this.time + " <b>" + this.botName + ":</b> " + this.botMessage);
-            //console.log(this.botMessage);
-            // says the message using the text to speech function written below
+            this.messages.push(this.time + " <b>" + this.botName + " :</b> " + this.botMessage);
+            sessionStorage.setItem("lastname", this.time + " " + this.botName + " : " + this.botMessage);
+            const key = document.getElementById("chatbox").innerHTML = sessionStorage.getItem("lastname"); 
             this.Speech(this.botMessage);
-            //outputs the last few array elements of messages to html
-            for (var i = 1; i < 8; i++) {
-            if (this.messages[this.messages.length - i])
-                document.getElementById("chatlog" + i).innerHTML = this.messages[this.messages.length - i];
+            for (var i = 1; i < 10; i++) {
+                if (this.messages[this.messages.length - i]){
+                    document.getElementById("chatlog" + i).innerHTML = this.messages[this.messages.length - i];
+                }
             }
         }
     }
 
-    //clears the placeholder text ion the chatbox
     //this function is set to run when the users brings focus to the chatbox, by clicking on it
     placeHolder() {
-    document.getElementById("chatbox").placeholder = "";
+        document.getElementById("chatbox").placeholder = "";
     }
 
     run() {
@@ -146,6 +149,6 @@ function  closeNav() {
     document.getElementById("mySidebar").style.width = "0";
     } 
 
-const botV1 = new MyBot("ChuckJoke");
-const botV2 = new MyBot("John");
-const botV3 = new MyBot("Jello");
+const botV1 = new MyBot("ChuckJokeBot",1,'en-US');
+const botV2 = new MyBot("KenuuBot",2,'en-US');
+const botV3 = new MyBot("CatFactBot",3,'en-US');

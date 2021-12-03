@@ -5,7 +5,7 @@ body {
   
   #bodybox {
     margin: auto;
-    max-width: 550px;
+    max-width: 900px;
     font: 15px arial, sans-serif;
     background-color: white;
     border-style: solid;
@@ -26,7 +26,7 @@ body {
     margin-bottom: 2px;
     margin-left: 10px;
     margin-right: 2px;
-    padding-top: 100px;
+    padding-top: 10px;
     padding-bottom: 10px;
     padding-right: 15px;
     padding-left: 15px;
@@ -35,11 +35,13 @@ body {
   
   .chatlog {
      font: 15px arial, sans-serif;
+     line-height: 25px;
   }
 
   .chatlogA {
     font: 15px arial, sans-serif;
     text-align: end;
+    line-height: 25px;
  }
   
   #chatbox {
