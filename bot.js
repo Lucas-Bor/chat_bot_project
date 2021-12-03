@@ -15,6 +15,7 @@ class MyBot {
     }
 
     render() {
+        document.getElementById("bot1").innerHTML = this.botName;
         if (sessionStorage.getItem("autosave")) {
             // Last Message Restoration
             sessionStorage.value = sessionStorage.getItem("autosave");
