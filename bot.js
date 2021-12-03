@@ -15,6 +15,11 @@ class MyBot {
     }
 
     render() {
+        if (sessionStorage.getItem("autosave")) {
+            // Last Message Restoration
+            sessionStorage.value = sessionStorage.getItem("autosave");
+            document.getElementById("chatlog" + "1").innerHTML = sessionStorage.value
+        }
         document.addEventListener("keypress", (e) => {
             this.keyPress();
         })
@@ -119,12 +124,11 @@ class MyBot {
             await this.chatbotResponse();
             //add the chatbot's name and message to the array messages
             this.messages.push(this.time + " <b>" + this.botName + " :</b> " + this.botMessage);
-            sessionStorage.setItem("lastname", this.time + " " + this.botName + " : " + this.botMessage);
-            const key = document.getElementById("chatbox").innerHTML = sessionStorage.getItem("lastname"); 
             this.Speech(this.botMessage);
             for (var i = 1; i < 10; i++) {
                 if (this.messages[this.messages.length - i]){
                     document.getElementById("chatlog" + i).innerHTML = this.messages[this.messages.length - i];
+                    sessionStorage.setItem("autosave", this.time + " " + this.botName + " : " + this.botMessage);
                 }
             }
         }
