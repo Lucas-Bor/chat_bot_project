@@ -1,23 +1,44 @@
-class MyBot {
-    constructor(botName,triggerNumber,botVoice) {
+class Bot {
+    constructor(botName, triggerNumber) {
+        this.botName = botName,
+        this.triggerNumber = triggerNumber
+    }
+}
+
+class ChatBot {
+    constructor() {
         this.messages = [], //array that hold the record of each string in chat
         this.lastUserMessage = "", //keeps track of the most recent input string from the user
         this.botMessage = "", //var keeps track of what the chatbot is going to say
-        this.botName = botName, //name of the chatbot
-        this.triggerNumber = triggerNumber, //number defining command
-        this.botVoice = botVoice, //text-to-speech voice of the bot
         this.userName = 'UserName', //name of the user
         this.talking = true; //when false the speach function doesn't work
         this.app = document.querySelector("#app");
-        this.run();
         this.today = new Date();
         this.time = this.today.getHours() + ":" + this.today.getMinutes();
+        this.botList = {
+            botV1: new Bot(
+                'ChuckBot',
+                1
+            ),
+            botV2: new Bot(
+                'KenuuBot',
+                2
+            ),
+            botV3: new Bot(
+                'CatFactBot',
+                3
+            )
+        };
+        this.run();
     }
 
     render() {
-        document.getElementById("bot1").innerHTML = this.botName;
+        console.log(this.botList.botV3.botName)
+        for (let i in this.botList) {
+            document.getElementById(i).innerHTML = this.botList[i].botName;
+        }
         if (sessionStorage.getItem("autosave")) {
-            // Last Message Restoration
+            //last Message Restoration
             sessionStorage.value = sessionStorage.getItem("autosave");
             document.getElementById("chatlog" + "1").innerHTML = sessionStorage.value
         }
@@ -34,9 +55,9 @@ class MyBot {
             this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
         }
         if (this.lastUserMessage === 'name') {
-            this.botMessage = 'My name is ' + this.botName;
+            this.botMessage = 'My name is ' + this.botList.botV3.botName;
         }
-        if (this.lastUserMessage === 'chuck' && this.triggerNumber === 1) {
+        if (this.lastUserMessage === 'chuck') {
             async function myFetch() {
                 const response = await fetch('https://api.chucknorris.io/jokes/random')
                 const url = await response.json();
@@ -46,14 +67,10 @@ class MyBot {
                 const result = await myFetch()
                 return result
             }
-            (async () => {
-                this.botMessage = await awaitFunction()
-                return this.botMessage
-            })()
             this.botMessage = await awaitFunction()
-            console.log(this.botMessage)
+            this.botName = this.botList.botV1.botName;
         }
-        if (this.lastUserMessage === 'kenuu' && this.triggerNumber === 2) {
+        if (this.lastUserMessage === 'kenuu') {
             async function myFetch() {
                 const response = await fetch('https://api.kanye.rest/')
                 const url = await response.json();
@@ -63,12 +80,8 @@ class MyBot {
                 const result = await myFetch()
                 return result
             }
-            (async () => {
-                this.botMessage = await awaitFunction()
-                return this.botMessage
-            })()
             this.botMessage = await awaitFunction()
-            console.log(this.botMessage)
+            this.botName = this.botList.botV2.botName;
         }
         if (this.lastUserMessage === 'catfact') {
             async function myFetch() {
@@ -80,12 +93,8 @@ class MyBot {
                 const result = await myFetch()
                 return result
             }
-            (async () => {
-                this.botMessage = await awaitFunction()
-                return this.botMessage
-            })()
             this.botMessage = await awaitFunction()
-            console.log(this.botMessage)
+            this.botName = this.botList.botV3.botName;
         }
         if (this.lastUserMessage === 'help') {
             this.botMessage = 'Commands List : hello, name, chuck, kenuu';
@@ -121,10 +130,11 @@ class MyBot {
             console.log(this.botName)
             this.lastUserMessage = document.getElementById("chatbox").value;
             document.getElementById("chatbox").value = "";
-            this.messages.push(this.lastUserMessage + " <b>: " + this.userName + "</b> " + this.time);
+            this.messages.push(this.lastUserMessage + " <b>: " + this.userName + "</b> [" + this.time + "]");
             await this.chatbotResponse();
+            console.log(this.botName)
             //add the chatbot's name and message to the array messages
-            this.messages.push(this.time + " <b>" + this.botName + " :</b> " + this.botMessage);
+            this.messages.push("[" +this.time + "] <b>" + this.botName + " :</b> " + this.botMessage);
             this.Speech(this.botMessage);
             for (var i = 1; i < 10; i++) {
                 if (this.messages[this.messages.length - i]){
@@ -154,6 +164,4 @@ function  closeNav() {
     document.getElementById("mySidebar").style.width = "0";
     } 
 
-const botV1 = new MyBot("ChuckJokeBot",1,'en-US');
-const botV2 = new MyBot("KenuuBot",2,'en-US');
-const botV3 = new MyBot("CatFactBot",3,'en-US');
+const chatbot = new ChatBot();
