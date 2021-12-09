@@ -1,7 +1,8 @@
 class Bot {
-    constructor(botName, triggerNumber) {
+    constructor(botName, commandNumber, botVoice) {
         this.botName = botName,
-        this.triggerNumber = triggerNumber
+        this.commandNumber = commandNumber,
+        this.botVoice = botVoice
     }
 }
 
@@ -18,22 +19,23 @@ class ChatBot {
         this.botList = {
             botV1: new Bot(
                 'ChuckBot',
-                1
+                1,
+                
             ),
             botV2: new Bot(
                 'KenuuBot',
-                2
+                2,
             ),
             botV3: new Bot(
                 'CatFactBot',
-                3
+                3,
             )
         };
         this.run();
     }
 
     render() {
-        console.log(this.botList.botV3.botName)
+        console.log(this.botList.botV1.botName)
         for (let i in this.botList) {
             document.getElementById(i).innerHTML = this.botList[i].botName;
         }
@@ -45,14 +47,23 @@ class ChatBot {
         document.addEventListener("keypress", (e) => {
             this.keyPress();
         })
+        document.getElementById("button-addon2").addEventListener("click", (e) => {
+            this.buttonPress();
+        })
     }
 
     async chatbotResponse() {
+        this.botName = this.botList.botV1.botName;
         this.talking = true;
         this.botMessage = "I didn't understand this.";
-        if (this.lastUserMessage =='hello') {
-            const hi = ['hi','howdy','hello']
-            this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
+        if (this.lastUserMessage.includes("hello")) {
+            for (let i in this.botList) {
+                if (this.lastUserMessage.includes(this.botList[i].botName)){
+                    const hi = ['hi','howdy',"hello I'm " + this.botList[i].botName]
+                    this.botMessage = hi[Math.floor(Math.random()*(hi.length))];;
+                    this.botName = this.botList[i].botName;
+                }
+            }
         }
         if (this.lastUserMessage === 'name') {
             this.botMessage = 'My name is ' + this.botList.botV3.botName;
@@ -98,6 +109,7 @@ class ChatBot {
         }
         if (this.lastUserMessage === 'help') {
             this.botMessage = 'Commands List : hello, name, chuck, kenuu';
+            this.botName = this.botList.botV1.botName;
         }
     }
 
@@ -105,7 +117,7 @@ class ChatBot {
     Speech(say) {
         if ('speechSynthesis' in window && this.talking) {
             var utterance = new SpeechSynthesisUtterance(say);
-            utterance.lang = 'en-US';
+            utterance.lang = 'en-IN';
             speechSynthesis.speak(utterance);
         }
     }
@@ -120,6 +132,10 @@ class ChatBot {
         if (key == 38) {
             console.log('hi')
         }
+    }
+
+    buttonPress(e) {
+        this.newEntry();
     }
 
     //this runs each time enter is pressed.
