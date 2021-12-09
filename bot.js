@@ -35,7 +35,6 @@ class ChatBot {
     }
 
     render() {
-        console.log(this.botList.botV1.botName)
         for (let i in this.botList) {
             document.getElementById(i).innerHTML = this.botList[i].botName;
         }
@@ -65,8 +64,13 @@ class ChatBot {
                 }
             }
         }
-        if (this.lastUserMessage === 'name') {
-            this.botMessage = 'My name is ' + this.botList.botV3.botName;
+        if (this.lastUserMessage.includes("name")) {
+            for (let i in this.botList) {
+                if (this.lastUserMessage.includes(this.botList[i].botName)){
+                    this.botMessage = 'My name is ' + this.botList[i].botName;
+                    this.botName = this.botList[i].botName;
+                }
+            }
         }
         if (this.lastUserMessage === 'chuck') {
             async function myFetch() {
@@ -143,19 +147,17 @@ class ChatBot {
         
         //if the message from the user isn't empty then run 
         if (document.getElementById("chatbox").value != "") {
-            console.log(this.botName)
             this.lastUserMessage = document.getElementById("chatbox").value;
             document.getElementById("chatbox").value = "";
             this.messages.push(this.lastUserMessage + " <b>: " + this.userName + "</b> [" + this.time + "]");
             await this.chatbotResponse();
-            console.log(this.botName)
             //add the chatbot's name and message to the array messages
             this.messages.push("[" +this.time + "] <b>" + this.botName + " :</b> " + this.botMessage);
             this.Speech(this.botMessage);
             for (var i = 1; i < 10; i++) {
                 if (this.messages[this.messages.length - i]){
                     document.getElementById("chatlog" + i).innerHTML = this.messages[this.messages.length - i];
-                    sessionStorage.setItem("autosave", this.time + " " + this.botName + " : " + this.botMessage);
+                    sessionStorage.setItem("autosave", "[" + this.time + "] <b>" + this.botName + " :</b> " + this.botMessage);
                 }
             }
         }
